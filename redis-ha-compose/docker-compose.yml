@@ -1,0 +1,41 @@
+version: '2.2'
+
+# docker-compose up --scale redis-slave=2 --scale sentinel=3 -d
+
+services:
+  redis-master:
+    image: redis:5-alpine
+    command: redis-server --appendonly no
+    ports:
+      - "6379"
+
+  sentinel:
+    image: redis:5-alpine
+    entrypoint: |
+      sh -c 'sh -s <<EOF
+      "/bin/sh" -c "cat <<EOF > /sentinel.conf
+      port 3000
+      dir /tmp
+      sentinel monitor master-node redis-master 6379 2
+      sentinel down-after-milliseconds master-node 5000
+      sentinel parallel-syncs master-node 1
+      sentinel failover-timeout master-node 5000
+      EOF"
+      "/bin/sh" -c "redis-sentinel /sentinel.conf"
+      EOF'
+    depends_on:
+      - redis-master
+    ports:
+      - "3000"
+
+  redis-slave:
+    image: redis:5-alpine
+    command: redis-server --appendonly yes --aof-use-rdb-preamble yes --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+    ports:
+      - "6379"
+
+## other app
+## use volume
+## use macvlan
