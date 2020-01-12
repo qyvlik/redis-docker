@@ -1,6 +1,6 @@
 # redis-docker
 
-some redis container orchestrations
+Some redis container orchestrations
 
 ## redis-ha-componse
 

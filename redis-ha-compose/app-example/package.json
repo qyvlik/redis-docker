@@ -1,0 +1,14 @@
+{
+  "name": "redis-ha-compose-app-example",
+  "version": "1.0.0",
+  "description": "redis-ha-compose-app-example",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ioredis": "^4.14.1"
+  }
+}
