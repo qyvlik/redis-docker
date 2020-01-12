@@ -1,4 +1,4 @@
-# master-slave-without-failover
+# master-slave-with-failover
 
 ## startup one master and two slaves
 
