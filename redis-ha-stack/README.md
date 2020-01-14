@@ -2,7 +2,7 @@
 
 ## startup one master and two slaves
 
-There is three docker swarm node:
+There is three docker swarm nodes:
 
 - swarm-master: manager
 - swarm-worker-0: worker
@@ -10,7 +10,9 @@ There is three docker swarm node:
 
 ## get ip from swarm node
 
-This docker stack use host mode, the docker swarm node ip is the redis server ip.
+This docker stack use **host** network mode, the docker swarm nodes ip is the redis servers ip.
+
+So you can connect the redis servers by use the IDE, such as IntelliJ IDEA.
 
 ```bash
 docker node inspect --format {{.Status.Addr}} swarm-master
@@ -36,9 +38,29 @@ export $(cat .env)
 docker stack deploy -c redis-ha-stack.yml redis-ha-stack
 ```
 
-### network
+### how to use
 
+Use node js, see [ioredis#sentinel](https://github.com/luin/ioredis/#sentinel).
 
+```ecmascript 6
+let Redis = require("ioredis");
+let redis = new Redis({
+    sentinels: [
+        // please use the `docker node inspect --format {{.Status.Addr}} swarm-master` to get ip
+        {host: "IP_OF_swarm-master", port: 3000},
+        {host: "IP_OF_swarm-worker-0", port: 3000},
+        {host: "IP_OF_swarm-worker-1", port: 3000}
+    ],
+    name: "master-node"
+});
+(async () => {
+    let key = "foo";
+    let rawValue = Date.now();
+    await redis.set(key, rawValue + "");
+    let value = await redis.get(key);
+    console.info(`get key:${key}, value:${value}`);
+})();
+```
 
 ## stop
 
