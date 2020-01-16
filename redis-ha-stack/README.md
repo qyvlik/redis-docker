@@ -1,7 +1,5 @@
 # master-slave-with-failover
 
-## startup one master and two slaves
-
 There is three docker swarm nodes:
 
 - swarm-master: manager
